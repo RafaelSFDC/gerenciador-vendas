@@ -220,7 +220,7 @@
                         </a>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <a href="#" class="btn btn-outline-success w-100 py-3">
+                        <a href="{{ route('relatorios.index') }}" class="btn btn-outline-success w-100 py-3">
                             <i class="fas fa-file-pdf fa-2x mb-2 d-block"></i>
                             Relatórios
                         </a>

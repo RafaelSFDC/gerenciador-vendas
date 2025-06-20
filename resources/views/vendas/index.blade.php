@@ -36,7 +36,7 @@
                     <select name="cliente_id" id="cliente_id" class="form-select">
                         <option value="">Todos os clientes</option>
                         @foreach($clientes as $cliente)
-                            <option value="{{ $cliente->id }}" 
+                            <option value="{{ $cliente->id }}"
                                 {{ request('cliente_id') == $cliente->id ? 'selected' : '' }}>
                                 {{ $cliente->nome }}
                             </option>
@@ -49,7 +49,7 @@
                     <select name="forma_pagamento_id" id="forma_pagamento_id" class="form-select">
                         <option value="">Todas as formas</option>
                         @foreach($formasPagamento as $forma)
-                            <option value="{{ $forma->id }}" 
+                            <option value="{{ $forma->id }}"
                                 {{ request('forma_pagamento_id') == $forma->id ? 'selected' : '' }}>
                                 {{ $forma->nome }}
                             </option>
@@ -69,13 +69,13 @@
 
                 <div class="col-md-2 mb-3">
                     <label for="data_inicio" class="form-label">Data Início</label>
-                    <input type="date" name="data_inicio" id="data_inicio" class="form-control" 
+                    <input type="date" name="data_inicio" id="data_inicio" class="form-control"
                            value="{{ request('data_inicio') }}">
                 </div>
 
                 <div class="col-md-2 mb-3">
                     <label for="data_fim" class="form-label">Data Fim</label>
-                    <input type="date" name="data_fim" id="data_fim" class="form-control" 
+                    <input type="date" name="data_fim" id="data_fim" class="form-control"
                            value="{{ request('data_fim') }}">
                 </div>
             </div>
@@ -158,23 +158,27 @@
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('vendas.show', $venda) }}" 
+                                        <a href="{{ route('vendas.show', $venda) }}"
                                            class="btn btn-sm btn-outline-primary" title="Visualizar">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('vendas.edit', $venda) }}" 
+                                        <a href="{{ route('relatorios.venda-pdf', $venda) }}"
+                                           class="btn btn-sm btn-outline-success" title="PDF" target="_blank">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </a>
+                                        <a href="{{ route('vendas.edit', $venda) }}"
                                            class="btn btn-sm btn-outline-warning" title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <button type="button" class="btn btn-sm btn-outline-danger" 
+                                        <button type="button" class="btn btn-sm btn-outline-danger"
                                                 title="Excluir" onclick="confirmarExclusao({{ $venda->id }})">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
 
                                     <!-- Form de exclusão (oculto) -->
-                                    <form id="form-excluir-{{ $venda->id }}" 
-                                          action="{{ route('vendas.destroy', $venda) }}" 
+                                    <form id="form-excluir-{{ $venda->id }}"
+                                          action="{{ route('vendas.destroy', $venda) }}"
                                           method="POST" style="display: none;">
                                         @csrf
                                         @method('DELETE')
@@ -196,7 +200,7 @@
                 <h5 class="text-muted">Nenhuma venda encontrada</h5>
                 <p class="text-muted">
                     @if(request()->hasAny(['cliente_id', 'forma_pagamento_id', 'status', 'data_inicio', 'data_fim']))
-                        Tente ajustar os filtros ou 
+                        Tente ajustar os filtros ou
                         <a href="{{ route('vendas.index') }}">remover todos os filtros</a>.
                     @else
                         Comece criando sua primeira venda.

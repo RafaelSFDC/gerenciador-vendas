@@ -44,6 +44,13 @@
                                 Vendas
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('relatorios.*') ? 'active' : '' }}"
+                               href="{{ route('relatorios.index') }}">
+                                <i class="fas fa-chart-bar me-1"></i>
+                                Relatórios
+                            </a>
+                        </li>
                     @endauth
                 </ul>
 

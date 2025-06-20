@@ -39,17 +39,17 @@
                     <div class="col-sm-4"><strong>ID:</strong></div>
                     <div class="col-sm-8">#{{ $venda->id }}</div>
                 </div>
-                
+
                 <div class="row mb-3">
                     <div class="col-sm-4"><strong>Data:</strong></div>
                     <div class="col-sm-8">{{ $venda->data_venda->format('d/m/Y') }}</div>
                 </div>
-                
+
                 <div class="row mb-3">
                     <div class="col-sm-4"><strong>Vendedor:</strong></div>
                     <div class="col-sm-8">{{ $venda->user->name }}</div>
                 </div>
-                
+
                 <div class="row mb-3">
                     <div class="col-sm-4"><strong>Cliente:</strong></div>
                     <div class="col-sm-8">
@@ -61,12 +61,12 @@
                         @endif
                     </div>
                 </div>
-                
+
                 <div class="row mb-3">
                     <div class="col-sm-4"><strong>Forma de Pagamento:</strong></div>
                     <div class="col-sm-8">{{ $venda->formaPagamento->nome }}</div>
                 </div>
-                
+
                 <div class="row mb-3">
                     <div class="col-sm-4"><strong>Status:</strong></div>
                     <div class="col-sm-8">
@@ -79,7 +79,7 @@
                         @endif
                     </div>
                 </div>
-                
+
                 @if($venda->observacoes)
                     <div class="row mb-3">
                         <div class="col-sm-4"><strong>Observações:</strong></div>
@@ -106,14 +106,14 @@
                         <h4 class="text-success mb-0">R$ {{ number_format($venda->valor_total, 2, ',', '.') }}</h4>
                     </div>
                 </div>
-                
+
                 <div class="row mb-3">
                     <div class="col-sm-6"><strong>Número de Parcelas:</strong></div>
                     <div class="col-sm-6">
                         <span class="badge bg-info">{{ $venda->numero_parcelas }}x</span>
                     </div>
                 </div>
-                
+
                 <div class="row mb-3">
                     <div class="col-sm-6"><strong>Valor por Parcela:</strong></div>
                     <div class="col-sm-6">
@@ -231,18 +231,18 @@
                     Listar Vendas
                 </a>
             </div>
-            
+
             <div>
                 <a href="{{ route('vendas.edit', $venda) }}" class="btn btn-warning me-2">
                     <i class="fas fa-edit me-1"></i>
                     Editar Venda
                 </a>
-                
-                <button type="button" class="btn btn-success me-2">
+
+                <a href="{{ route('relatorios.venda-pdf', $venda) }}" class="btn btn-success me-2" target="_blank">
                     <i class="fas fa-file-pdf me-1"></i>
                     Gerar PDF
-                </button>
-                
+                </a>
+
                 <button type="button" class="btn btn-danger" onclick="confirmarExclusao()">
                     <i class="fas fa-trash me-1"></i>
                     Excluir
