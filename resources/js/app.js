@@ -1,9 +1,6 @@
 import 'bootstrap';
 import '../css/app.css';
 
-// Configuração global do jQuery
-window.$ = window.jQuery = require('jquery');
-
 // Funções globais para o sistema de vendas
 window.VendasApp = {
     // Adicionar item à venda
@@ -214,7 +211,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Evento para gerar parcelas
     const numeroParcelasInput = document.getElementById('numero_parcelas');
     if (numeroParcelasInput) {
-        numeroParcelasInput.addEventListener('change', VendasApp.gerarParcelas);
+        numeroParcelasInput.addEventListener('change', function() {
+            VendasApp.gerarParcelas();
+        });
     }
 
     // Calcular total inicial

@@ -520,7 +520,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Evento para gerar parcelas
     const numeroParcelasInput = document.getElementById('numero_parcelas');
     if (numeroParcelasInput) {
-        numeroParcelasInput.addEventListener('change', VendasApp.gerarParcelas);
+        numeroParcelasInput.addEventListener('change', function() {
+            VendasApp.gerarParcelas();
+        });
     }
 });
 
@@ -569,7 +571,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 clienteSelect.value = data.cliente.id;
 
                 // Fechar modal e limpar formulário
-                const modal = bootstrap.Modal.getInstance(document.getElementById('modalNovoCliente'));
+                const modalElement = document.getElementById('modalNovoCliente');
+                const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
                 modal.hide();
                 document.getElementById('formNovoCliente').reset();
 
@@ -620,7 +623,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 // Fechar modal e limpar formulário
-                const modal = bootstrap.Modal.getInstance(document.getElementById('modalNovoProduto'));
+                const modalElement = document.getElementById('modalNovoProduto');
+                const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
                 modal.hide();
                 document.getElementById('formNovoProduto').reset();
 
