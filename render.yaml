@@ -36,8 +36,6 @@ services:
         value: true
       - key: FORCE_SEED
         value: false
-      - key: ASSET_URL
-        value: https://dc-tecnologia-vendas.onrender.com
     healthCheckPath: /health
     autoDeploy: true
     buildFilter:
