@@ -77,5 +77,9 @@ chmod 664 /var/www/html/database/database.sqlite
 
 echo "✅ Aplicação inicializada com sucesso!"
 
+# Garantir que diretórios do supervisor existam
+mkdir -p /var/log/supervisor
+mkdir -p /var/run
+
 # Iniciar supervisor para gerenciar os processos
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

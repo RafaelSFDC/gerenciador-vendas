@@ -93,12 +93,16 @@ RUN mkdir -p /var/www/html/storage/logs \
     && mkdir -p /var/www/html/storage/framework/sessions \
     && mkdir -p /var/www/html/storage/framework/views \
     && mkdir -p /var/www/html/bootstrap/cache \
-    && mkdir -p /var/www/html/database
+    && mkdir -p /var/www/html/database \
+    && mkdir -p /var/log/supervisor \
+    && mkdir -p /var/run
 
 # Configurar permissões finais
 RUN chown -R www-data:www-data /var/www/html/storage \
     && chown -R www-data:www-data /var/www/html/bootstrap/cache \
-    && chown -R www-data:www-data /var/www/html/database
+    && chown -R www-data:www-data /var/www/html/database \
+    && chmod -R 755 /var/log/supervisor \
+    && chmod -R 755 /var/run
 
 # Expor porta
 EXPOSE 80
