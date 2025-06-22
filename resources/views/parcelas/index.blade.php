@@ -37,7 +37,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-3 mb-3">
         <div class="card bg-danger text-white">
             <div class="card-body">
@@ -53,7 +53,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-3 mb-3">
         <div class="card bg-info text-white">
             <div class="card-body">
@@ -69,7 +69,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-3 mb-3">
         <div class="card bg-secondary text-white">
             <div class="card-body">
@@ -93,23 +93,23 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="btn-group" role="group">
-                    <a href="{{ route('parcelas.index', ['status' => 'todas']) }}" 
+                    <a href="{{ route('parcelas.index', ['status' => 'todas']) }}"
                        class="btn {{ $status === 'todas' ? 'btn-primary' : 'btn-outline-primary' }}">
                         Todas
                     </a>
-                    <a href="{{ route('parcelas.index', ['status' => 'pendentes']) }}" 
+                    <a href="{{ route('parcelas.index', ['status' => 'pendentes']) }}"
                        class="btn {{ $status === 'pendentes' ? 'btn-warning' : 'btn-outline-warning' }}">
                         Pendentes
                     </a>
-                    <a href="{{ route('parcelas.index', ['status' => 'vencidas']) }}" 
+                    <a href="{{ route('parcelas.index', ['status' => 'vencidas']) }}"
                        class="btn {{ $status === 'vencidas' ? 'btn-danger' : 'btn-outline-danger' }}">
                         Vencidas
                     </a>
-                    <a href="{{ route('parcelas.index', ['status' => 'vencendo']) }}" 
+                    <a href="{{ route('parcelas.index', ['status' => 'vencendo']) }}"
                        class="btn {{ $status === 'vencendo' ? 'btn-info' : 'btn-outline-info' }}">
                         Vencendo (7 dias)
                     </a>
-                    <a href="{{ route('parcelas.index', ['status' => 'pagas']) }}" 
+                    <a href="{{ route('parcelas.index', ['status' => 'pagas']) }}"
                        class="btn {{ $status === 'pagas' ? 'btn-success' : 'btn-outline-success' }}">
                         Pagas
                     </a>
@@ -167,8 +167,11 @@
                                 <td>
                                     {{ $parcela->data_vencimento->format('d/m/Y') }}
                                     @if($parcela->data_vencimento < today() && $parcela->status === 'pendente')
+                                        @php
+                                            $dias = $parcela->data_vencimento->diffInDays(today());
+                                        @endphp
                                         <br><small class="text-danger">
-                                            {{ $parcela->data_vencimento->diffForHumans() }}
+                                            Venceu há {{ $dias }} {{ $dias == 1 ? 'dia' : 'dias' }}
                                         </small>
                                     @elseif($parcela->data_vencimento == today() && $parcela->status === 'pendente')
                                         <br><small class="text-warning">Vence hoje!</small>
@@ -196,7 +199,7 @@
                                             <form action="{{ route('parcelas.marcar-paga', $parcela) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('PATCH')
-                                                <button type="submit" class="btn btn-success btn-sm" 
+                                                <button type="submit" class="btn btn-success btn-sm"
                                                         onclick="return confirm('Marcar esta parcela como paga?')">
                                                     <i class="fas fa-check"></i>
                                                 </button>
@@ -205,13 +208,13 @@
                                             <form action="{{ route('parcelas.marcar-pendente', $parcela) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('PATCH')
-                                                <button type="submit" class="btn btn-outline-warning btn-sm" 
+                                                <button type="submit" class="btn btn-outline-warning btn-sm"
                                                         onclick="return confirm('Desfazer o pagamento desta parcela?')">
                                                     <i class="fas fa-undo"></i>
                                                 </button>
                                             </form>
                                         @endif
-                                        
+
                                         <a href="{{ route('vendas.show', $parcela->venda) }}" class="btn btn-outline-primary btn-sm">
                                             <i class="fas fa-eye"></i>
                                         </a>
@@ -222,7 +225,7 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <!-- Paginação -->
             <div class="d-flex justify-content-center">
                 {{ $parcelas->appends(request()->query())->links() }}

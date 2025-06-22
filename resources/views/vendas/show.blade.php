@@ -200,8 +200,11 @@
                             <td>
                                 {{ $parcela->data_vencimento->format('d/m/Y') }}
                                 @if($parcela->data_vencimento < today() && $parcela->status === 'pendente')
+                                    @php
+                                        $dias = $parcela->data_vencimento->diffInDays(today());
+                                    @endphp
                                     <br><small class="text-danger">
-                                        {{ $parcela->data_vencimento->diffForHumans() }}
+                                        Venceu há {{ $dias }} {{ $dias == 1 ? 'dia' : 'dias' }}
                                     </small>
                                 @elseif($parcela->data_vencimento == today() && $parcela->status === 'pendente')
                                     <br><small class="text-warning">Vence hoje!</small>

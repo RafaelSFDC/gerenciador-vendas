@@ -53,16 +53,15 @@ class DashboardController extends Controller
                 $query->where('user_id', $userId);
             })
             ->where(function($query) use ($hoje, $proximosSete) {
-                // Parcelas pendentes vencendo nos próximos 7 dias (incluindo hoje)
-                $query->where('status', 'pendente')
+                $query->where(function($q) use ($hoje, $proximosSete) {
+                    // Parcelas pendentes vencendo nos próximos 7 dias (incluindo hoje)
+                    $q->where('status', 'pendente')
                       ->whereBetween('data_vencimento', [$hoje, $proximosSete]);
-            })
-            ->orWhere(function($query) use ($userId) {
-                // Parcelas vencidas
-                $query->whereHas('venda', function($q) use ($userId) {
-                    $q->where('user_id', $userId);
                 })
-                ->where('status', 'vencida');
+                ->orWhere(function($q) {
+                    // Parcelas vencidas
+                    $q->where('status', 'vencida');
+                });
             })
             ->orderBy('data_vencimento')
             ->limit(10)

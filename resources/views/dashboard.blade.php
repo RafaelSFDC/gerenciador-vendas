@@ -182,7 +182,10 @@
                                     @if($parcela->data_vencimento == today())
                                         (Hoje!)
                                     @elseif($parcela->data_vencimento < today())
-                                        ({{ $parcela->data_vencimento->diffForHumans() }})
+                                        @php
+                                            $dias = $parcela->data_vencimento->diffInDays(today());
+                                        @endphp
+                                        (há {{ $dias }} {{ $dias == 1 ? 'dia' : 'dias' }})
                                     @endif
                                 </small>
                             </div>
