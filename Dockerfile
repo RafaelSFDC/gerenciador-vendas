@@ -83,7 +83,7 @@ RUN chown -R www-data:www-data /var/www/html \
 
 # Copiar configurações
 COPY docker/nginx.conf /etc/nginx/nginx.conf
-COPY docker/default.conf /etc/nginx/http.d/default.conf
+COPY docker/default-https.conf /etc/nginx/http.d/default.conf
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/php.ini /usr/local/etc/php/conf.d/custom.ini
 COPY docker/start.sh /usr/local/bin/start.sh
@@ -111,6 +111,22 @@ RUN chown -R www-data:www-data /var/www/html/storage \
     && chown -R www-data:www-data /var/www/html/database \
     && chmod -R 755 /var/log/supervisor \
     && chmod -R 755 /var/run
+
+# Configurar variáveis de ambiente padrão para produção
+ENV APP_ENV=production \
+    APP_DEBUG=false \
+    FORCE_HTTPS=true \
+    APP_URL=https://dc-tecnologia-vendas.onrender.com \
+    DB_CONNECTION=sqlite \
+    DB_DATABASE=/var/www/html/database/database.sqlite \
+    CACHE_STORE=file \
+    SESSION_DRIVER=file \
+    QUEUE_CONNECTION=database \
+    LOG_CHANNEL=stderr \
+    LOG_LEVEL=info \
+    SESSION_LIFETIME=120 \
+    BCRYPT_ROUNDS=12 \
+    FORCE_SEED=false
 
 # Expor porta
 EXPOSE 80
