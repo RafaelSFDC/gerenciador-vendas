@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Parcela;
 use App\Models\Venda;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -47,15 +46,26 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        // Parcelas vencendo (próximos 7 dias)
+        // Parcelas vencendo (próximos 7 dias) e vencidas
         $proximosSete = Carbon::now()->addDays(7);
-        $parcelasVencendo = Parcela::whereHas('venda', function($query) use ($userId) {
+        $parcelasVencendo = Parcela::with(['venda'])
+            ->whereHas('venda', function($query) use ($userId) {
                 $query->where('user_id', $userId);
             })
-            ->where('status', 'pendente')
-            ->whereBetween('data_vencimento', [$hoje, $proximosSete])
+            ->where(function($query) use ($hoje, $proximosSete) {
+                // Parcelas pendentes vencendo nos próximos 7 dias (incluindo hoje)
+                $query->where('status', 'pendente')
+                      ->whereBetween('data_vencimento', [$hoje, $proximosSete]);
+            })
+            ->orWhere(function($query) use ($userId) {
+                // Parcelas vencidas
+                $query->whereHas('venda', function($q) use ($userId) {
+                    $q->where('user_id', $userId);
+                })
+                ->where('status', 'vencida');
+            })
             ->orderBy('data_vencimento')
-            ->limit(5)
+            ->limit(10)
             ->get();
 
         return view('dashboard', compact(

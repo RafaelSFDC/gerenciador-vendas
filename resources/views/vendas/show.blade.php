@@ -193,10 +193,20 @@
                 </thead>
                 <tbody>
                     @foreach($venda->parcelas as $parcela)
-                        <tr>
+                        <tr class="{{ $parcela->data_vencimento < today() && $parcela->status === 'pendente' ? 'table-danger' : '' }}
+                                  {{ $parcela->data_vencimento == today() && $parcela->status === 'pendente' ? 'table-warning' : '' }}">
                             <td>{{ $parcela->numero_parcela }}ª</td>
                             <td>R$ {{ number_format($parcela->valor, 2, ',', '.') }}</td>
-                            <td>{{ $parcela->data_vencimento->format('d/m/Y') }}</td>
+                            <td>
+                                {{ $parcela->data_vencimento->format('d/m/Y') }}
+                                @if($parcela->data_vencimento < today() && $parcela->status === 'pendente')
+                                    <br><small class="text-danger">
+                                        {{ $parcela->data_vencimento->diffForHumans() }}
+                                    </small>
+                                @elseif($parcela->data_vencimento == today() && $parcela->status === 'pendente')
+                                    <br><small class="text-warning">Vence hoje!</small>
+                                @endif
+                            </td>
                             <td>
                                 @if($parcela->data_pagamento)
                                     {{ $parcela->data_pagamento->format('d/m/Y') }}
@@ -205,13 +215,42 @@
                                 @endif
                             </td>
                             <td>
-                                @if($parcela->status === 'pendente')
-                                    <span class="badge bg-warning">Pendente</span>
-                                @elseif($parcela->status === 'paga')
-                                    <span class="badge bg-success">Paga</span>
-                                @else
-                                    <span class="badge bg-danger">Vencida</span>
-                                @endif
+                                <div class="d-flex align-items-center gap-2">
+                                    @if($parcela->status === 'pendente')
+                                        <span class="badge bg-warning">Pendente</span>
+                                        <form action="{{ route('parcelas.marcar-paga', $parcela) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="btn btn-success btn-sm"
+                                                    onclick="return confirm('Marcar esta parcela como paga?')"
+                                                    title="Marcar como paga">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        </form>
+                                    @elseif($parcela->status === 'paga')
+                                        <span class="badge bg-success">Paga</span>
+                                        <form action="{{ route('parcelas.marcar-pendente', $parcela) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="btn btn-outline-warning btn-sm"
+                                                    onclick="return confirm('Desfazer o pagamento desta parcela?')"
+                                                    title="Desfazer pagamento">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </form>
+                                    @else
+                                        <span class="badge bg-danger">Vencida</span>
+                                        <form action="{{ route('parcelas.marcar-paga', $parcela) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="btn btn-success btn-sm"
+                                                    onclick="return confirm('Marcar esta parcela como paga?')"
+                                                    title="Marcar como paga">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                     @endforeach

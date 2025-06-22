@@ -17,6 +17,14 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('clientes', ClienteController::class);
     Route::resource('produtos', ProdutoController::class);
 
+    // Rotas de parcelas
+    Route::prefix('parcelas')->name('parcelas.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\ParcelaController::class, 'index'])->name('index');
+        Route::patch('{parcela}/marcar-paga', [\App\Http\Controllers\ParcelaController::class, 'marcarComoPaga'])->name('marcar-paga');
+        Route::patch('{parcela}/marcar-pendente', [\App\Http\Controllers\ParcelaController::class, 'marcarComoPendente'])->name('marcar-pendente');
+        Route::patch('{parcela}/atualizar-data-pagamento', [\App\Http\Controllers\ParcelaController::class, 'atualizarDataPagamento'])->name('atualizar-data-pagamento');
+    });
+
     // Rotas de relatórios
     Route::prefix('relatorios')->name('relatorios.')->group(function () {
         Route::get('/', [RelatorioController::class, 'formRelatorioVendas'])->name('index');

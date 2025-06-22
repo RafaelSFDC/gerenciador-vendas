@@ -154,34 +154,75 @@
     <!-- Parcelas Vencendo -->
     <div class="col-md-4 mb-4">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0">
                     <i class="fas fa-exclamation-triangle me-2"></i>
                     Parcelas Vencendo
                 </h5>
+                <a href="{{ route('parcelas.index') }}" class="btn btn-sm btn-outline-primary">
+                    Ver todas
+                </a>
             </div>
             <div class="card-body">
                 @if(isset($parcelasVencendo) && $parcelasVencendo->count() > 0)
                     @foreach($parcelasVencendo as $parcela)
-                        <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                        <div class="d-flex justify-content-between align-items-center mb-2 p-2
+                             {{ $parcela->status === 'vencida' ? 'bg-danger bg-opacity-10' :
+                                ($parcela->data_vencimento == today() ? 'bg-warning bg-opacity-10' : 'bg-light') }} rounded">
                             <div>
-                                <small class="text-muted">Venda #{{ $parcela->venda_id }}</small><br>
+                                <small class="text-muted">
+                                    <a href="{{ route('vendas.show', $parcela->venda) }}" class="text-decoration-none">
+                                        Venda #{{ $parcela->venda_id }}
+                                    </a>
+                                </small><br>
                                 <strong>R$ {{ number_format($parcela->valor, 2, ',', '.') }}</strong><br>
-                                <small class="text-danger">{{ $parcela->data_vencimento->format('d/m/Y') }}</small>
+                                <small class="{{ $parcela->status === 'vencida' ? 'text-danger' :
+                                              ($parcela->data_vencimento == today() ? 'text-warning' : 'text-muted') }}">
+                                    {{ $parcela->data_vencimento->format('d/m/Y') }}
+                                    @if($parcela->data_vencimento == today())
+                                        (Hoje!)
+                                    @elseif($parcela->data_vencimento < today())
+                                        ({{ $parcela->data_vencimento->diffForHumans() }})
+                                    @endif
+                                </small>
                             </div>
-                            <div>
+                            <div class="d-flex flex-column align-items-end gap-1">
                                 @if($parcela->status === 'vencida')
                                     <span class="badge bg-danger">Vencida</span>
+                                @elseif($parcela->data_vencimento == today())
+                                    <span class="badge bg-warning">Vence Hoje</span>
                                 @else
-                                    <span class="badge bg-warning">Vencendo</span>
+                                    <span class="badge bg-info">Vencendo</span>
+                                @endif
+
+                                @if($parcela->status !== 'paga')
+                                    <form action="{{ route('parcelas.marcar-paga', $parcela) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="btn btn-success btn-xs"
+                                                onclick="return confirm('Marcar como paga?')"
+                                                title="Marcar como paga">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </form>
                                 @endif
                             </div>
                         </div>
                     @endforeach
+
+                    @if($parcelasVencendo->count() >= 10)
+                        <div class="text-center mt-3">
+                            <a href="{{ route('parcelas.index') }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-plus me-1"></i>
+                                Ver mais parcelas
+                            </a>
+                        </div>
+                    @endif
                 @else
                     <div class="text-center py-3">
                         <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
                         <p class="text-muted mb-0">Nenhuma parcela vencendo</p>
+                        <small class="text-muted">Todas as parcelas estão em dia!</small>
                     </div>
                 @endif
             </div>
@@ -214,9 +255,9 @@
                         </a>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <a href="{{ route('vendas.index', ['status' => 'pendente']) }}" class="btn btn-outline-warning w-100 py-3">
-                            <i class="fas fa-clock fa-2x mb-2 d-block"></i>
-                            Vendas Pendentes
+                        <a href="{{ route('parcelas.index') }}" class="btn btn-outline-warning w-100 py-3">
+                            <i class="fas fa-credit-card fa-2x mb-2 d-block"></i>
+                            Gerenciar Parcelas
                         </a>
                     </div>
                     <div class="col-md-3 mb-3">
