@@ -12,6 +12,39 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- Fallback Bootstrap CSS via CDN para produção -->
+    @if(app()->environment('production'))
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    @endif
+
+    <!-- Verificação de carregamento de assets -->
+    <script>
+        // Verificar se Bootstrap CSS foi carregado
+        document.addEventListener('DOMContentLoaded', function() {
+            const testElement = document.createElement('div');
+            testElement.className = 'container d-none';
+            document.body.appendChild(testElement);
+
+            const computedStyle = window.getComputedStyle(testElement);
+            const hasBootstrap = computedStyle.maxWidth !== 'none' || computedStyle.display === 'none';
+
+            if (!hasBootstrap) {
+                console.warn('Bootstrap CSS não foi carregado corretamente');
+                // Carregar Bootstrap via CDN como fallback
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css';
+                link.integrity = 'sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH';
+                link.crossOrigin = 'anonymous';
+                document.head.appendChild(link);
+            }
+
+            document.body.removeChild(testElement);
+        });
+    </script>
+
     @stack('styles')
 </head>
 <body>
@@ -152,6 +185,27 @@
             </p>
         </div>
     </footer>
+
+    <!-- Fallback Bootstrap JS via CDN para produção -->
+    @if(app()->environment('production'))
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    @endif
+
+    <!-- Verificação de carregamento do Bootstrap JS -->
+    <script>
+        // Verificar se Bootstrap JS foi carregado
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof window.bootstrap === 'undefined') {
+                console.warn('Bootstrap JS não foi carregado corretamente');
+                // Carregar Bootstrap JS via CDN como fallback
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js';
+                script.integrity = 'sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz';
+                script.crossOrigin = 'anonymous';
+                document.head.appendChild(script);
+            }
+        });
+    </script>
 
     @stack('scripts')
 </body>
