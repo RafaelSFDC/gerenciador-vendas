@@ -11,6 +11,12 @@ Route::get('/', function () {
     return redirect()->route('login');
 })->name('home');
 
+// Health check endpoint para monitoramento do Render.com
+Route::get('/health', function () {
+    return response('healthy', 200)
+        ->header('Content-Type', 'text/plain');
+});
+
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('vendas', VendaController::class);
