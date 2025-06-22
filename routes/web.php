@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\VendaController;
 use Illuminate\Support\Facades\Route;
@@ -12,6 +14,8 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('vendas', VendaController::class);
+    Route::resource('clientes', ClienteController::class);
+    Route::resource('produtos', ProdutoController::class);
 
     // Rotas de relatórios
     Route::prefix('relatorios')->name('relatorios.')->group(function () {

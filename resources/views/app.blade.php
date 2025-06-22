@@ -45,6 +45,20 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('clientes.*') ? 'active' : '' }}"
+                               href="{{ route('clientes.index') }}">
+                                <i class="fas fa-users me-1"></i>
+                                Clientes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('produtos.*') ? 'active' : '' }}"
+                               href="{{ route('produtos.index') }}">
+                                <i class="fas fa-box me-1"></i>
+                                Produtos
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('relatorios.*') ? 'active' : '' }}"
                                href="{{ route('relatorios.index') }}">
                                 <i class="fas fa-chart-bar me-1"></i>

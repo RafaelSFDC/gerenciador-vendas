@@ -36,14 +36,19 @@
                 <div class="card-body">
                     <div class="mb-3">
                         <label for="cliente_id" class="form-label">Cliente (Opcional)</label>
-                        <select name="cliente_id" id="cliente_id" class="form-select">
-                            <option value="">Selecione um cliente (opcional)</option>
-                            @foreach($clientes as $cliente)
-                                <option value="{{ $cliente->id }}" {{ old('cliente_id') == $cliente->id ? 'selected' : '' }}>
-                                    {{ $cliente->nome }} - {{ $cliente->email }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <div class="input-group">
+                            <select name="cliente_id" id="cliente_id" class="form-select">
+                                <option value="">Selecione um cliente (opcional)</option>
+                                @foreach($clientes as $cliente)
+                                    <option value="{{ $cliente->id }}" {{ old('cliente_id') == $cliente->id ? 'selected' : '' }}>
+                                        {{ $cliente->nome }} - {{ $cliente->email }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalNovoCliente">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="mb-3">
@@ -117,10 +122,16 @@
                     <i class="fas fa-shopping-basket me-2"></i>
                     Itens da Venda
                 </h5>
-                <button type="button" class="btn btn-success btn-sm" onclick="VendasApp.adicionarItem()">
-                    <i class="fas fa-plus me-1"></i>
-                    Adicionar Item
-                </button>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-success btn-sm" onclick="VendasApp.adicionarItem()">
+                        <i class="fas fa-plus me-1"></i>
+                        Adicionar Item
+                    </button>
+                    <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalNovoProduto">
+                        <i class="fas fa-box me-1"></i>
+                        Novo Produto
+                    </button>
+                </div>
             </div>
         </div>
         <div class="card-body">
@@ -185,6 +196,101 @@
     <!-- Campo oculto para valor total -->
     <input type="hidden" name="valor_total" id="valor_total" value="0">
 </form>
+
+<!-- Modal Novo Cliente -->
+<div class="modal fade" id="modalNovoCliente" tabindex="-1" aria-labelledby="modalNovoClienteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalNovoClienteLabel">
+                    <i class="fas fa-user-plus me-2"></i>
+                    Cadastrar Novo Cliente
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formNovoCliente">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="cliente_nome" class="form-label">Nome <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="cliente_nome" name="nome" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cliente_email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="cliente_email" name="email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cliente_telefone" class="form-label">Telefone</label>
+                        <input type="text" class="form-control" id="cliente_telefone" name="telefone">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cliente_cpf_cnpj" class="form-label">CPF/CNPJ</label>
+                        <input type="text" class="form-control" id="cliente_cpf_cnpj" name="cpf_cnpj">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>
+                        Salvar Cliente
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Novo Produto -->
+<div class="modal fade" id="modalNovoProduto" tabindex="-1" aria-labelledby="modalNovoProdutoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalNovoProdutoLabel">
+                    <i class="fas fa-box me-2"></i>
+                    Cadastrar Novo Produto
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formNovoProduto">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="produto_nome" class="form-label">Nome <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="produto_nome" name="nome" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="produto_descricao" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="produto_descricao" name="descricao" rows="2"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="produto_preco" class="form-label">Preço <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                <input type="number" class="form-control" id="produto_preco" name="preco" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="produto_estoque" class="form-label">Estoque <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="produto_estoque" name="estoque" min="0" value="0" required>
+                        </div>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="produto_ativo" name="ativo" checked>
+                        <label class="form-check-label" for="produto_ativo">
+                            Produto ativo
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>
+                        Salvar Produto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -434,6 +540,100 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Configure as parcelas da venda.');
             return false;
         }
+    });
+});
+
+// Funções para cadastro rápido
+document.addEventListener('DOMContentLoaded', function() {
+    // Cadastro rápido de cliente
+    document.getElementById('formNovoCliente').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        fetch('{{ route("clientes.store") }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Adicionar cliente ao select
+                const clienteSelect = document.getElementById('cliente_id');
+                const option = new Option(data.cliente.nome + ' - ' + (data.cliente.email || ''), data.cliente.id);
+                clienteSelect.add(option);
+                clienteSelect.value = data.cliente.id;
+
+                // Fechar modal e limpar formulário
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalNovoCliente'));
+                modal.hide();
+                document.getElementById('formNovoCliente').reset();
+
+                // Mostrar mensagem de sucesso
+                alert('Cliente cadastrado com sucesso!');
+            } else {
+                alert('Erro ao cadastrar cliente: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao cadastrar cliente. Tente novamente.');
+        });
+    });
+
+    // Cadastro rápido de produto
+    document.getElementById('formNovoProduto').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        fetch('{{ route("produtos.store") }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Adicionar produto ao array global
+                window.produtos.push({
+                    id: data.produto.id,
+                    nome: data.produto.nome,
+                    preco: data.produto.preco
+                });
+
+                // Atualizar todos os selects de produto existentes
+                document.querySelectorAll('.produto-select').forEach(select => {
+                    const option = new Option(
+                        data.produto.nome + ' - R$ ' + data.produto.preco,
+                        data.produto.id
+                    );
+                    option.dataset.preco = data.produto.preco;
+                    select.add(option);
+                });
+
+                // Fechar modal e limpar formulário
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalNovoProduto'));
+                modal.hide();
+                document.getElementById('formNovoProduto').reset();
+
+                // Mostrar mensagem de sucesso
+                alert('Produto cadastrado com sucesso!');
+            } else {
+                alert('Erro ao cadastrar produto: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao cadastrar produto. Tente novamente.');
+        });
     });
 });
 </script>
