@@ -55,6 +55,15 @@ fi
 # Otimizar aplicação para produção
 if [ "$APP_ENV" = "production" ]; then
     echo "⚡ Otimizando aplicação para produção..."
+
+    # Verificar se os assets existem
+    if [ -d "/var/www/html/public/build" ]; then
+        echo "✅ Assets encontrados em /var/www/html/public/build"
+        ls -la /var/www/html/public/build/
+    else
+        echo "❌ Assets não encontrados em /var/www/html/public/build"
+    fi
+
     php artisan config:cache
     php artisan route:cache
     php artisan view:cache

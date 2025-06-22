@@ -13,9 +13,13 @@ RUN npm ci --omit=dev --silent
 COPY resources/ ./resources/
 COPY public/ ./public/
 COPY vite.config.ts ./
+COPY tsconfig.json ./
 
 # Build dos assets
 RUN npm run build
+
+# Verificar se o build foi bem-sucedido
+RUN ls -la ./public/build/ && ls -la ./public/build/assets/
 
 # Stage 2: PHP Runtime
 FROM php:8.4-fpm-alpine AS php-base
@@ -68,10 +72,14 @@ COPY . .
 # Copiar assets buildados do stage anterior
 COPY --from=node-builder /app/public/build ./public/build
 
+# Verificar se os assets foram copiados corretamente
+RUN ls -la ./public/build/ || echo "Diretório build não encontrado"
+
 # Configurar permissões
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache
+    && chmod -R 755 /var/www/html/bootstrap/cache \
+    && chmod -R 755 /var/www/html/public/build
 
 # Copiar configurações
 COPY docker/nginx.conf /etc/nginx/nginx.conf
