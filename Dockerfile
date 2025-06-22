@@ -5,6 +5,8 @@ WORKDIR /app
 
 # Copiar arquivos de dependências do Node.js
 COPY package*.json ./
+COPY vite.config.ts ./
+COPY tsconfig.json ./
 
 # Instalar dependências do Node.js (incluindo dev para build)
 RUN npm ci --silent
@@ -12,14 +14,9 @@ RUN npm ci --silent
 # Copiar código fonte do frontend
 COPY resources/ ./resources/
 COPY public/ ./public/
-COPY vite.config.ts ./
-COPY tsconfig.json ./
 
 # Build dos assets
 RUN npm run build
-
-# Limpar dependências de desenvolvimento após build
-RUN npm prune --omit=dev
 
 # Verificar se o build foi bem-sucedido
 RUN ls -la ./public/build/ && ls -la ./public/build/assets/ && cat ./public/build/manifest.json

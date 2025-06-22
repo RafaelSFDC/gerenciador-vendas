@@ -30,6 +30,11 @@ export default defineConfig({
         sourcemap: false,
         minify: 'esbuild',
         cssMinify: true,
+        // Configurações adicionais para produção
+        target: 'es2015',
+        cssTarget: 'chrome80',
+        reportCompressedSize: false,
+        chunkSizeWarningLimit: 1000,
     },
     server: {
         hmr: {
@@ -38,5 +43,11 @@ export default defineConfig({
     },
     css: {
         devSourcemap: false,
+        // Configurações CSS para produção
+        postcss: {},
+    },
+    // Otimizações para produção
+    optimizeDeps: {
+        include: ['bootstrap'],
     },
 });
