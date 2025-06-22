@@ -43,13 +43,13 @@
                                     <i class="fas fa-envelope me-1"></i>
                                     E-mail
                                 </label>
-                                <input type="email" 
-                                       class="form-control @error('email') is-invalid @enderror" 
-                                       id="email" 
-                                       name="email" 
-                                       value="{{ old('email') }}" 
-                                       required 
-                                       autofocus 
+                                <input type="email"
+                                       class="form-control @error('email') is-invalid @enderror"
+                                       id="email"
+                                       name="email"
+                                       value="{{ old('email') }}"
+                                       required
+                                       autofocus
                                        autocomplete="username">
                                 @error('email')
                                     <div class="invalid-feedback">
@@ -64,11 +64,11 @@
                                     <i class="fas fa-lock me-1"></i>
                                     Senha
                                 </label>
-                                <input type="password" 
-                                       class="form-control @error('password') is-invalid @enderror" 
-                                       id="password" 
-                                       name="password" 
-                                       required 
+                                <input type="password"
+                                       class="form-control @error('password') is-invalid @enderror"
+                                       id="password"
+                                       name="password"
+                                       required
                                        autocomplete="current-password">
                                 @error('password')
                                     <div class="invalid-feedback">
@@ -79,9 +79,9 @@
 
                             <!-- Remember Me -->
                             <div class="mb-3 form-check">
-                                <input type="checkbox" 
-                                       class="form-check-input" 
-                                       id="remember" 
+                                <input type="checkbox"
+                                       class="form-check-input"
+                                       id="remember"
                                        name="remember">
                                 <label class="form-check-label" for="remember">
                                     Lembrar-me
