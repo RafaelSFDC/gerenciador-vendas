@@ -60,8 +60,8 @@ WORKDIR /var/www/html
 # Copiar arquivos de dependências do PHP
 COPY composer.json composer.lock ./
 
-# Instalar dependências do PHP (incluindo dev para seeds, depois remover)
-RUN composer install --optimize-autoloader --no-interaction --prefer-dist --no-scripts
+# Instalar dependências do PHP (somente produção)
+RUN composer install --optimize-autoloader --no-interaction --prefer-dist --no-scripts --no-dev
 
 # Stage 3: Final Production Image
 FROM php-base AS production

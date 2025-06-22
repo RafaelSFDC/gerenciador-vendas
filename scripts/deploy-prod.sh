@@ -42,9 +42,16 @@ fi
 
 echo "🔍 Executando verificações pré-deploy..."
 
+# Limpar cache do composer e reinstalar dependências
+echo "🧹 Limpando cache do composer..."
+composer clear-cache
+
 # Instalar dependências se necessário
 if [ ! -d "vendor" ]; then
     echo "📦 Instalando dependências PHP..."
+    composer install --no-dev --optimize-autoloader
+else
+    echo "📦 Atualizando dependências PHP..."
     composer install --no-dev --optimize-autoloader
 fi
 

@@ -56,6 +56,10 @@ fi
 if [ "$APP_ENV" = "production" ]; then
     echo "⚡ Otimizando aplicação para produção..."
 
+    # Regenerar autoloader sem dependências de desenvolvimento
+    echo "🔄 Regenerando autoloader..."
+    composer dump-autoload --optimize --no-dev
+
     # Verificar se os assets existem
     if [ -d "/var/www/html/public/build" ]; then
         echo "✅ Assets encontrados em /var/www/html/public/build"
