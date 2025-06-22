@@ -13,6 +13,16 @@ O **DC Tecnologia Sistema de Vendas** é uma aplicação web completa para geren
 - 📈 **Dashboard**: Visão geral das vendas, parcelas e indicadores
 - 📄 **Relatórios**: Geração de relatórios em PDF e consultas personalizadas
 
+## 🌐 Aplicação em Produção
+
+🚀 **Acesse a aplicação rodando**: [https://dc-tecnologia-vendas.onrender.com](https://dc-tecnologia-vendas.onrender.com)
+
+> ⚠️ **Nota**: A aplicação pode demorar até 2 minutos para abrir, pois está hospedada em um plano gratuito no Render que hiberna quando não está em uso.
+
+### Credenciais de Acesso
+- **Email**: `vendedor@dctecnologia.com`
+- **Senha**: `123456`
+
 ## 🛠️ Tecnologias Utilizadas
 
 ### Backend
