@@ -9,7 +9,7 @@ if [ -d "public/build" ]; then
     echo "✅ Diretório public/build existe"
     echo "📁 Conteúdo do diretório build:"
     ls -la public/build/
-    
+
     if [ -d "public/build/assets" ]; then
         echo "✅ Diretório public/build/assets existe"
         echo "📁 Conteúdo do diretório assets:"
@@ -17,11 +17,11 @@ if [ -d "public/build" ]; then
     else
         echo "❌ Diretório public/build/assets não existe"
     fi
-    
-    if [ -f "public/build/.vite/manifest.json" ]; then
+
+    if [ -f "public/build/manifest.json" ]; then
         echo "✅ Arquivo manifest.json existe"
         echo "📄 Conteúdo do manifest.json:"
-        cat public/build/.vite/manifest.json
+        cat public/build/manifest.json
     else
         echo "❌ Arquivo manifest.json não existe"
     fi

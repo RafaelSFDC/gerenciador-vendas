@@ -12,15 +12,15 @@ test_docker_build() {
     echo "🏗️ Testando build Docker..."
     echo "docker build -t dc-vendas-test ."
     echo ""
-    
+
     echo "📦 Verificando se assets foram copiados:"
     echo "docker run --rm dc-vendas-test ls -la /var/www/html/public/build/"
     echo ""
-    
+
     echo "📄 Verificando manifest.json:"
-    echo "docker run --rm dc-vendas-test cat /var/www/html/public/build/.vite/manifest.json"
+    echo "docker run --rm dc-vendas-test cat /var/www/html/public/build/manifest.json"
     echo ""
-    
+
     echo "🌐 Testando servidor Nginx:"
     echo "docker run -d -p 8080:80 --name dc-vendas-test dc-vendas-test"
     echo "sleep 10"
@@ -34,41 +34,41 @@ test_docker_build() {
 # Função para testar build local
 test_local_build() {
     echo "🏗️ Testando build local dos assets..."
-    
+
     if [ ! -d "node_modules" ]; then
         echo "📦 Instalando dependências Node.js..."
         echo "npm install"
     fi
-    
+
     echo "🔨 Executando build..."
     echo "npm run build"
-    
+
     echo "✅ Verificando arquivos gerados:"
     echo "ls -la public/build/"
     echo "ls -la public/build/assets/"
-    echo "cat public/build/.vite/manifest.json"
+    echo "cat public/build/manifest.json"
 }
 
 # Função para verificar configurações
 check_configs() {
     echo "🔍 Verificando configurações..."
-    
+
     echo "📋 Dockerfile - Stage de build Node.js:"
     echo "grep -A 10 'FROM node:' Dockerfile"
     echo ""
-    
+
     echo "📋 Dockerfile - Cópia dos assets:"
     echo "grep -A 5 'COPY.*build' Dockerfile"
     echo ""
-    
+
     echo "📋 Nginx - Configuração de assets:"
     echo "grep -A 10 'location.*build' docker/default.conf"
     echo ""
-    
+
     echo "📋 Vite config:"
     echo "cat vite.config.ts"
     echo ""
-    
+
     echo "📋 Render config:"
     echo "grep -A 5 'ASSET_URL' render.yaml"
 }
@@ -88,11 +88,11 @@ show_menu() {
 main() {
     echo "🚀 Iniciando testes de assets..."
     echo ""
-    
+
     while true; do
         show_menu
         read -r choice
-        
+
         case $choice in
             1)
                 test_local_build

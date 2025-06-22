@@ -9,10 +9,10 @@ echo ""
 # Verificar se os assets existem localmente
 check_local_assets() {
     echo "📁 Verificando assets locais..."
-    
+
     if [ -d "public/build" ]; then
         echo "✅ Diretório public/build existe"
-        
+
         if [ -d "public/build/assets" ]; then
             echo "✅ Diretório public/build/assets existe"
             echo "📄 Arquivos encontrados:"
@@ -20,9 +20,11 @@ check_local_assets() {
         else
             echo "❌ Diretório public/build/assets não existe"
         fi
-        
-        if [ -f "public/build/.vite/manifest.json" ]; then
+
+        if [ -f "public/build/manifest.json" ]; then
             echo "✅ Arquivo manifest.json existe"
+            echo "📄 Conteúdo do manifest:"
+            cat public/build/manifest.json
         else
             echo "❌ Arquivo manifest.json não existe"
         fi
@@ -36,7 +38,7 @@ check_local_assets() {
 # Verificar configurações do Vite
 check_vite_config() {
     echo "⚙️ Verificando configuração do Vite..."
-    
+
     if [ -f "vite.config.ts" ]; then
         echo "✅ vite.config.ts encontrado"
         echo "📋 Configuração atual:"
@@ -52,7 +54,7 @@ check_vite_config() {
 # Verificar configurações do Laravel
 check_laravel_config() {
     echo "🔧 Verificando configuração do Laravel..."
-    
+
     echo "📋 Template Blade (app.blade.php):"
     if grep -q "@vite" resources/views/app.blade.php; then
         echo "✅ Diretiva @vite encontrada"
@@ -66,21 +68,21 @@ check_laravel_config() {
 # Verificar configurações do Docker
 check_docker_config() {
     echo "🐳 Verificando configuração do Docker..."
-    
+
     echo "📋 Dockerfile - Build dos assets:"
     if grep -q "npm run build" Dockerfile; then
         echo "✅ Build dos assets configurado no Dockerfile"
     else
         echo "❌ Build dos assets não encontrado no Dockerfile"
     fi
-    
+
     echo "📋 Dockerfile - Cópia dos assets:"
     if grep -q "COPY.*build" Dockerfile; then
         echo "✅ Cópia dos assets configurada no Dockerfile"
     else
         echo "❌ Cópia dos assets não encontrada no Dockerfile"
     fi
-    
+
     echo "📋 .dockerignore:"
     if grep -q "^/public/build" .dockerignore; then
         echo "❌ public/build está sendo excluído no .dockerignore"
@@ -93,16 +95,16 @@ check_docker_config() {
 # Verificar configurações do Nginx
 check_nginx_config() {
     echo "🌐 Verificando configuração do Nginx..."
-    
+
     if [ -f "docker/default.conf" ]; then
         echo "✅ Configuração do Nginx encontrada"
-        
+
         if grep -q "location /build/" docker/default.conf; then
             echo "✅ Configuração para /build/ encontrada"
         else
             echo "❌ Configuração para /build/ não encontrada"
         fi
-        
+
         if grep -q "location.*\.(css|js)" docker/default.conf; then
             echo "✅ Configuração para arquivos estáticos encontrada"
         else
@@ -117,10 +119,10 @@ check_nginx_config() {
 # Verificar configurações do Render
 check_render_config() {
     echo "☁️ Verificando configuração do Render..."
-    
+
     if [ -f "render.yaml" ]; then
         echo "✅ render.yaml encontrado"
-        
+
         if grep -q "ASSET_URL" render.yaml; then
             echo "✅ ASSET_URL configurado"
             grep -A 1 "ASSET_URL" render.yaml
@@ -167,7 +169,7 @@ main() {
     check_nginx_config
     check_render_config
     show_suggestions
-    
+
     echo "✅ Diagnóstico concluído!"
     echo ""
     echo "📝 Próximos passos:"

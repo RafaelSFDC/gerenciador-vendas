@@ -19,7 +19,7 @@ COPY tsconfig.json ./
 RUN npm run build
 
 # Verificar se o build foi bem-sucedido
-RUN ls -la ./public/build/ && ls -la ./public/build/assets/
+RUN ls -la ./public/build/ && ls -la ./public/build/assets/ && cat ./public/build/manifest.json
 
 # Stage 2: PHP Runtime
 FROM php:8.4-fpm-alpine AS php-base

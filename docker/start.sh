@@ -60,6 +60,14 @@ if [ "$APP_ENV" = "production" ]; then
     if [ -d "/var/www/html/public/build" ]; then
         echo "✅ Assets encontrados em /var/www/html/public/build"
         ls -la /var/www/html/public/build/
+
+        if [ -f "/var/www/html/public/build/manifest.json" ]; then
+            echo "✅ Manifest.json encontrado"
+            echo "📄 Conteúdo do manifest:"
+            cat /var/www/html/public/build/manifest.json
+        else
+            echo "❌ Manifest.json não encontrado"
+        fi
     else
         echo "❌ Assets não encontrados em /var/www/html/public/build"
     fi
