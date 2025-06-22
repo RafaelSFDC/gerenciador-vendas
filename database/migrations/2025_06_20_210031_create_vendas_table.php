@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Vendedor
             $table->foreignId('cliente_id')->nullable()->constrained()->onDelete('set null'); // Cliente opcional
-            $table->foreignId('forma_pagamento_id')->constrained()->onDelete('cascade');
+            $table->foreignId('forma_pagamento_id')->constrained('formas_pagamento')->onDelete('cascade');
             $table->decimal('valor_total', 10, 2);
             $table->integer('numero_parcelas')->default(1);
             $table->date('data_venda');
