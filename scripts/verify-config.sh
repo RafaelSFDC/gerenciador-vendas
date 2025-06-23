@@ -87,13 +87,13 @@ echo "🌐 Verificando configurações nginx..."
 
 if [ -f "docker/default-https.conf" ]; then
     print_status "Arquivo default-https.conf existe" "OK"
-    
+
     if grep -q "Strict-Transport-Security" docker/default-https.conf; then
         print_status "Headers HSTS configurados" "OK"
     else
         print_status "Headers HSTS não configurados" "WARNING"
     fi
-    
+
     if grep -q "Content-Security-Policy" docker/default-https.conf; then
         print_status "Content Security Policy configurado" "OK"
     else
@@ -109,34 +109,12 @@ else
     print_status "Arquivo nginx.conf não encontrado" "ERROR"
 fi
 
-# Verificar middleware CSP
-echo ""
-echo "🛡️ Verificando middleware CSP..."
-
-if [ -f "app/Http/Middleware/ContentSecurityPolicy.php" ]; then
-    print_status "Middleware CSP existe" "OK"
-else
-    print_status "Middleware CSP não encontrado" "WARNING"
-fi
-
-if grep -q "ContentSecurityPolicy" bootstrap/app.php; then
-    print_status "Middleware CSP registrado" "OK"
-else
-    print_status "Middleware CSP não registrado" "WARNING"
-fi
-
-# Verificar template com nonces
+# Verificar template principal
 echo ""
 echo "📄 Verificando templates..."
 
 if [ -f "resources/views/app.blade.php" ]; then
     print_status "Template app.blade.php existe" "OK"
-    
-    if grep -q "csp_nonce" resources/views/app.blade.php; then
-        print_status "Nonces CSP configurados no template" "OK"
-    else
-        print_status "Nonces CSP não configurados no template" "WARNING"
-    fi
 else
     print_status "Template app.blade.php não encontrado" "ERROR"
 fi

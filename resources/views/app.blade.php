@@ -22,7 +22,7 @@
     @endif
 
     <!-- Verificação de carregamento de assets -->
-    <script nonce="{{ $csp_nonce ?? '' }}">
+    <script>
         // Verificar se Bootstrap CSS foi carregado
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(function() {
@@ -204,7 +204,7 @@
     </footer>
 
     <!-- Verificação de carregamento do Bootstrap JS -->
-    <script nonce="{{ $csp_nonce ?? '' }}">
+    <script>
         // Verificar se Bootstrap JS foi carregado
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(function() {
