@@ -189,6 +189,7 @@
                         <th>Data Vencimento</th>
                         <th>Data Pagamento</th>
                         <th>Status</th>
+                        <th>Tipo</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -254,6 +255,20 @@
                                         </form>
                                     @endif
                                 </div>
+                            </td>
+                            <td>
+                                @if($parcela->customizada)
+                                    <span class="badge bg-warning">
+                                        <i class="fas fa-lock me-1"></i>Customizada
+                                    </span>
+                                    @if($parcela->valor_original)
+                                        <br><small class="text-muted">
+                                            Original: R$ {{ number_format($parcela->valor_original, 2, ',', '.') }}
+                                        </small>
+                                    @endif
+                                @else
+                                    <span class="badge bg-secondary">Automática</span>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

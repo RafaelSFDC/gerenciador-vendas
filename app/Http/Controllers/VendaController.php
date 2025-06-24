@@ -123,10 +123,14 @@ class VendaController extends Controller
 
             // Criar parcelas
             foreach ($request->parcelas as $index => $parcela) {
+                $customizada = isset($parcela['customizada']) && $parcela['customizada'];
+
                 Parcela::create([
                     'venda_id' => $venda->id,
                     'numero_parcela' => $index + 1,
                     'valor' => $parcela['valor'],
+                    'valor_original' => $customizada ? ($valorTotal / count($request->parcelas)) : null,
+                    'customizada' => $customizada,
                     'data_vencimento' => $parcela['data_vencimento'],
                     'status' => 'pendente',
                 ]);
@@ -230,10 +234,14 @@ class VendaController extends Controller
 
             // Recriar parcelas
             foreach ($request->parcelas as $index => $parcela) {
+                $customizada = isset($parcela['customizada']) && $parcela['customizada'];
+
                 Parcela::create([
                     'venda_id' => $venda->id,
                     'numero_parcela' => $index + 1,
                     'valor' => $parcela['valor'],
+                    'valor_original' => $customizada ? ($valorTotal / count($request->parcelas)) : null,
+                    'customizada' => $customizada,
                     'data_vencimento' => $parcela['data_vencimento'],
                     'status' => 'pendente',
                 ]);

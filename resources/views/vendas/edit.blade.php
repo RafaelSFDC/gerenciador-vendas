@@ -181,18 +181,36 @@
         <div class="card-body">
             <div id="parcelas-container">
                 @foreach($venda->parcelas as $index => $parcela)
-                    <div class="row mb-2">
-                        <div class="col-md-3">
+                    <div class="row mb-2 parcela-row" data-index="{{ $index }}">
+                        <div class="col-md-2">
                             <label class="form-label">Parcela {{ $index + 1 }}</label>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <input type="date" name="parcelas[{{ $index }}][data_vencimento]"
                                    class="form-control" value="{{ $parcela->data_vencimento->format('Y-m-d') }}" required>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <input type="number" name="parcelas[{{ $index }}][valor]"
-                                   class="form-control" value="{{ $parcela->valor }}"
-                                   min="0" step="0.01" required>
+                                   class="form-control parcela-valor" value="{{ $parcela->valor }}"
+                                   min="0" step="0.01" required
+                                   style="{{ $parcela->customizada ? 'background-color: #fff3cd; border-color: #ffc107;' : '' }}">
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-check">
+                                <input type="checkbox" name="parcelas[{{ $index }}][customizada]"
+                                       class="form-check-input parcela-customizada"
+                                       id="customizada_{{ $index }}" value="1"
+                                       {{ $parcela->customizada ? 'checked' : '' }}
+                                       onchange="VendasApp.toggleCustomizacao({{ $index }})">
+                                <label class="form-check-label" for="customizada_{{ $index }}">
+                                    <small>Customizar</small>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <span class="badge bg-secondary parcela-status" style="{{ $parcela->customizada ? 'display: inline-block;' : 'display: none;' }}">
+                                <i class="fas fa-lock me-1"></i>Fixo
+                            </span>
                         </div>
                     </div>
                 @endforeach
@@ -240,6 +258,25 @@ document.addEventListener('DOMContentLoaded', function() {
     // Configurar eventos para itens existentes
     document.querySelectorAll('.item-venda').forEach(item => {
         VendasApp.configurarEventosItem(item);
+    });
+
+    // Configurar eventos para parcelas customizadas existentes
+    document.querySelectorAll('.parcela-customizada').forEach(checkbox => {
+        if (checkbox.checked) {
+            const row = checkbox.closest('.parcela-row');
+            const valorInput = row.querySelector('.parcela-valor');
+            const status = row.querySelector('.parcela-status');
+
+            // Aplicar estilo visual para parcelas customizadas
+            valorInput.style.backgroundColor = '#fff3cd';
+            valorInput.style.borderColor = '#ffc107';
+            status.style.display = 'inline-block';
+
+            // Adicionar evento para recalcular quando valor customizado mudar
+            valorInput.addEventListener('input', function() {
+                VendasApp.atualizarParcelas(parseFloat(document.getElementById('valor_total').value) || 0);
+            });
+        }
     });
 
     // Calcular total inicial

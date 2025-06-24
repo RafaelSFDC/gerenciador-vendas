@@ -431,44 +431,180 @@ if (typeof window.VendasApp === 'undefined') {
         gerarParcelas: function() {
             const numeroParcelas = parseInt(document.getElementById('numero_parcelas').value) || 1;
             const total = parseFloat(document.getElementById('valor_total').value) || 0;
-            const valorParcela = total / numeroParcelas;
 
             const container = document.getElementById('parcelas-container');
+
+            // Salvar parcelas customizadas existentes
+            const parcelasCustomizadas = [];
+            document.querySelectorAll('.parcela-row').forEach((row, index) => {
+                const checkbox = row.querySelector('.parcela-customizada');
+                const valorInput = row.querySelector('.parcela-valor');
+                const dataInput = row.querySelector('input[type="date"]');
+
+                if (checkbox && checkbox.checked) {
+                    parcelasCustomizadas[index] = {
+                        valor: parseFloat(valorInput.value) || 0,
+                        data: dataInput.value,
+                        customizada: true
+                    };
+                }
+            });
+
+            // Calcular valor das parcelas customizadas
+            let valorCustomizado = 0;
+            let parcelasNaoCustomizadas = 0;
+
+            for (let i = 0; i < numeroParcelas; i++) {
+                if (parcelasCustomizadas[i]) {
+                    valorCustomizado += parcelasCustomizadas[i].valor;
+                } else {
+                    parcelasNaoCustomizadas++;
+                }
+            }
+
+            // Calcular valor para parcelas não customizadas
+            const valorRestante = total - valorCustomizado;
+            const valorPorParcela = parcelasNaoCustomizadas > 0 ? valorRestante / parcelasNaoCustomizadas : 0;
+
             container.innerHTML = '';
 
             for (let i = 0; i < numeroParcelas; i++) {
                 const dataVencimento = new Date();
                 dataVencimento.setMonth(dataVencimento.getMonth() + i + 1);
 
+                // Usar dados salvos se parcela era customizada, senão usar valores padrão
+                const parcelaCustomizada = parcelasCustomizadas[i];
+                const valor = parcelaCustomizada ? parcelaCustomizada.valor : valorPorParcela;
+                const data = parcelaCustomizada ? parcelaCustomizada.data : dataVencimento.toISOString().split('T')[0];
+                const customizada = parcelaCustomizada ? true : false;
+
                 const parcelaHtml = `
-                    <div class="row mb-2">
-                        <div class="col-md-3">
+                    <div class="row mb-2 parcela-row" data-index="${i}">
+                        <div class="col-md-2">
                             <label class="form-label">Parcela ${i + 1}</label>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <input type="date" name="parcelas[${i}][data_vencimento]"
-                                   class="form-control" value="${dataVencimento.toISOString().split('T')[0]}" required>
+                                   class="form-control" value="${data}" required>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <input type="number" name="parcelas[${i}][valor]"
-                                   class="form-control" value="${valorParcela.toFixed(2)}"
-                                   min="0" step="0.01" required>
+                                   class="form-control parcela-valor" value="${valor.toFixed(2)}"
+                                   min="0" step="0.01" required
+                                   style="${customizada ? 'background-color: #fff3cd; border-color: #ffc107;' : ''}">
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-check">
+                                <input type="checkbox" name="parcelas[${i}][customizada]"
+                                       class="form-check-input parcela-customizada"
+                                       id="customizada_${i}" value="1"
+                                       ${customizada ? 'checked' : ''}
+                                       onchange="VendasApp.toggleCustomizacao(${i})">
+                                <label class="form-check-label" for="customizada_${i}">
+                                    <small>Customizar</small>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <span class="badge bg-secondary parcela-status" style="${customizada ? 'display: inline-block;' : 'display: none;'}">
+                                <i class="fas fa-lock me-1"></i>Fixo
+                            </span>
                         </div>
                     </div>
                 `;
                 container.insertAdjacentHTML('beforeend', parcelaHtml);
             }
+
+            // Configurar eventos para parcelas customizadas
+            document.querySelectorAll('.parcela-customizada').forEach(checkbox => {
+                if (checkbox.checked) {
+                    const row = checkbox.closest('.parcela-row');
+                    const valorInput = row.querySelector('.parcela-valor');
+
+                    valorInput.addEventListener('input', () => {
+                        this.atualizarParcelas(parseFloat(document.getElementById('valor_total').value) || 0);
+                    });
+                }
+            });
+
             this.atualizarVisibilidadeParcelas();
         },
 
         // Atualizar parcelas quando total mudar
         atualizarParcelas: function(total) {
-            const numeroParcelas = parseInt(document.getElementById('numero_parcelas')?.value) || 1;
-            const valorParcela = total / numeroParcelas;
+            // Não fazer nada se não há parcelas
+            const parcelas = document.querySelectorAll('.parcela-row');
+            if (parcelas.length === 0) {
+                return;
+            }
 
-            document.querySelectorAll('input[name*="[valor]"]').forEach(input => {
-                input.value = valorParcela.toFixed(2);
+            // Calcular valor das parcelas customizadas
+            let valorCustomizado = 0;
+            let parcelasNaoCustomizadas = 0;
+
+            parcelas.forEach(row => {
+                const checkbox = row.querySelector('.parcela-customizada');
+                const valorInput = row.querySelector('.parcela-valor');
+
+                if (checkbox && checkbox.checked) {
+                    valorCustomizado += parseFloat(valorInput.value) || 0;
+                } else {
+                    parcelasNaoCustomizadas++;
+                }
             });
+
+            // Calcular valor para parcelas não customizadas
+            const valorRestante = Math.max(0, total - valorCustomizado);
+            const valorPorParcela = parcelasNaoCustomizadas > 0 ? valorRestante / parcelasNaoCustomizadas : 0;
+
+            // Atualizar apenas parcelas não customizadas
+            parcelas.forEach(row => {
+                const checkbox = row.querySelector('.parcela-customizada');
+                const valorInput = row.querySelector('.parcela-valor');
+
+                if (checkbox && !checkbox.checked) {
+                    valorInput.value = valorPorParcela.toFixed(2);
+                }
+            });
+
+            // Mostrar aviso se valor customizado excede o total
+            if (valorCustomizado > total) {
+                console.warn('Valor das parcelas customizadas excede o valor total da venda');
+            }
+        },
+
+        // Toggle customização de parcela
+        toggleCustomizacao: function(index) {
+            const row = document.querySelector(`.parcela-row[data-index="${index}"]`);
+            if (!row) return;
+
+            const checkbox = row.querySelector('.parcela-customizada');
+            const valorInput = row.querySelector('.parcela-valor');
+            const status = row.querySelector('.parcela-status');
+
+            if (checkbox.checked) {
+                // Marcar como customizada
+                valorInput.style.backgroundColor = '#fff3cd';
+                valorInput.style.borderColor = '#ffc107';
+                status.style.display = 'inline-block';
+
+                // Remover listeners antigos para evitar duplicação
+                const newInput = valorInput.cloneNode(true);
+                valorInput.parentNode.replaceChild(newInput, valorInput);
+
+                // Adicionar evento para recalcular quando valor customizado mudar
+                newInput.addEventListener('input', () => {
+                    this.atualizarParcelas(parseFloat(document.getElementById('valor_total').value) || 0);
+                });
+            } else {
+                // Remover customização
+                valorInput.style.backgroundColor = '';
+                valorInput.style.borderColor = '';
+                status.style.display = 'none';
+
+                // Recalcular valor desta parcela
+                this.atualizarParcelas(parseFloat(document.getElementById('valor_total').value) || 0);
+            }
         },
 
         // Atualizar visibilidade dos elementos de itens

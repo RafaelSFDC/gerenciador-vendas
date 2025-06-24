@@ -48,4 +48,49 @@ class Venda extends Model
     {
         return $this->hasMany(Parcela::class);
     }
+
+    /**
+     * Recalcular parcelas não customizadas
+     */
+    public function recalcularParcelas(): void
+    {
+        $parcelasCustomizadas = $this->parcelas()->where('customizada', true)->get();
+        $parcelasNaoCustomizadas = $this->parcelas()->where('customizada', false)->get();
+
+        if ($parcelasNaoCustomizadas->isEmpty()) {
+            return;
+        }
+
+        // Calcular valor total das parcelas customizadas
+        $valorCustomizado = $parcelasCustomizadas->sum('valor');
+
+        // Valor restante para distribuir entre parcelas não customizadas
+        $valorRestante = $this->valor_total - $valorCustomizado;
+
+        // Distribuir valor restante igualmente entre parcelas não customizadas
+        $valorPorParcela = $valorRestante / $parcelasNaoCustomizadas->count();
+
+        // Atualizar parcelas não customizadas
+        foreach ($parcelasNaoCustomizadas as $parcela) {
+            if ($parcela->podeSerRecalculada()) {
+                $parcela->update(['valor' => $valorPorParcela]);
+            }
+        }
+    }
+
+    /**
+     * Obter valor total das parcelas customizadas
+     */
+    public function getValorParcelasCustomizadas(): float
+    {
+        return $this->parcelas()->where('customizada', true)->sum('valor');
+    }
+
+    /**
+     * Obter valor disponível para parcelas não customizadas
+     */
+    public function getValorDisponivelParaParcelas(): float
+    {
+        return $this->valor_total - $this->getValorParcelasCustomizadas();
+    }
 }

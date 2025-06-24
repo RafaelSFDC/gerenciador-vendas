@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('venda_id')->constrained()->onDelete('cascade');
             $table->integer('numero_parcela');
             $table->decimal('valor', 10, 2);
+            $table->decimal('valor_original', 10, 2)->nullable();
+            $table->boolean('customizada')->default(false);
             $table->date('data_vencimento');
             $table->date('data_pagamento')->nullable();
             $table->enum('status', ['pendente', 'paga', 'vencida'])->default('pendente');
