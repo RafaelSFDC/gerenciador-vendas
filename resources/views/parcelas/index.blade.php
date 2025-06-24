@@ -196,14 +196,15 @@
                                 <td>
                                     <div class="btn-group btn-group-sm" role="group">
                                         @if($parcela->status !== 'paga')
-                                            <form action="{{ route('parcelas.marcar-paga', $parcela) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                @method('PATCH')
-                                                <button type="submit" class="btn btn-success btn-sm"
-                                                        onclick="return confirm('Marcar esta parcela como paga?')">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                            </form>
+                                            <button type="button" class="btn btn-success btn-sm"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#modalPagamento"
+                                                    data-parcela-id="{{ $parcela->id }}"
+                                                    data-parcela-numero="{{ $parcela->numero_parcela }}"
+                                                    data-venda-id="{{ $parcela->venda_id }}"
+                                                    data-valor="{{ number_format($parcela->valor, 2, ',', '.') }}">
+                                                <i class="fas fa-check"></i>
+                                            </button>
                                         @else
                                             <form action="{{ route('parcelas.marcar-pendente', $parcela) }}" method="POST" class="d-inline">
                                                 @csrf
@@ -249,4 +250,79 @@
         @endif
     </div>
 </div>
+
+<!-- Modal para Marcar como Pago -->
+<div class="modal fade" id="modalPagamento" tabindex="-1" aria-labelledby="modalPagamentoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalPagamentoLabel">
+                    <i class="fas fa-check me-2"></i>
+                    Marcar Parcela como Paga
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formPagamento" method="POST">
+                @csrf
+                @method('PATCH')
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <p class="mb-3">
+                            <strong>Venda:</strong> #<span id="modalVendaId"></span><br>
+                            <strong>Parcela:</strong> <span id="modalParcelaNumero"></span>ª<br>
+                            <strong>Valor:</strong> R$ <span id="modalValor"></span>
+                        </p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="dataPagamento" class="form-label">Data do Pagamento <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="dataPagamento" name="data_pagamento" required>
+                        <div class="form-text">Por padrão, será utilizada a data atual.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check me-1"></i>
+                        Marcar como Paga
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modalPagamento = document.getElementById('modalPagamento');
+    const formPagamento = document.getElementById('formPagamento');
+    const dataPagamentoInput = document.getElementById('dataPagamento');
+
+    modalPagamento.addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+        const parcelaId = button.getAttribute('data-parcela-id');
+        const parcelaNumero = button.getAttribute('data-parcela-numero');
+        const vendaId = button.getAttribute('data-venda-id');
+        const valor = button.getAttribute('data-valor');
+
+        // Atualizar informações no modal
+        document.getElementById('modalVendaId').textContent = vendaId;
+        document.getElementById('modalParcelaNumero').textContent = parcelaNumero;
+        document.getElementById('modalValor').textContent = valor;
+
+        // Configurar action do formulário
+        formPagamento.action = `/parcelas/${parcelaId}/marcar-paga`;
+
+        // Definir data atual como padrão
+        const hoje = new Date().toISOString().split('T')[0];
+        dataPagamentoInput.value = hoje;
+    });
+});
+</script>
+@endpush
+
 @endsection

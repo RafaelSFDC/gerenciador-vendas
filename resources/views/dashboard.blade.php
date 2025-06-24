@@ -231,6 +231,72 @@
             </div>
         </div>
     </div>
+
+    <!-- Parcelas Vencidas -->
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-exclamation-circle me-2 text-danger"></i>
+                    Parcelas Vencidas
+                </h5>
+                <a href="{{ route('parcelas.index', ['status' => 'vencidas']) }}" class="btn btn-sm btn-outline-danger">
+                    Ver todas
+                </a>
+            </div>
+            <div class="card-body">
+                @if(isset($parcelasVencidas) && $parcelasVencidas->count() > 0)
+                    @foreach($parcelasVencidas as $parcela)
+                        <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-danger bg-opacity-10 rounded">
+                            <div>
+                                <small class="text-muted">
+                                    <a href="{{ route('vendas.show', $parcela->venda) }}" class="text-decoration-none">
+                                        Venda #{{ $parcela->venda_id }}
+                                    </a>
+                                </small><br>
+                                <strong>R$ {{ number_format($parcela->valor, 2, ',', '.') }}</strong><br>
+                                <small class="text-danger">
+                                    {{ $parcela->data_vencimento->format('d/m/Y') }}
+                                    @php
+                                        $dias = $parcela->data_vencimento->diffInDays(today());
+                                    @endphp
+                                    (há {{ $dias }} {{ $dias == 1 ? 'dia' : 'dias' }})
+                                </small>
+                            </div>
+                            <div class="d-flex flex-column align-items-end gap-1">
+                                <span class="badge bg-danger">Vencida</span>
+                                <button type="button" class="btn btn-success btn-xs"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalPagamentoDashboard"
+                                        data-parcela-id="{{ $parcela->id }}"
+                                        data-parcela-numero="{{ $parcela->numero_parcela }}"
+                                        data-venda-id="{{ $parcela->venda_id }}"
+                                        data-valor="{{ number_format($parcela->valor, 2, ',', '.') }}"
+                                        title="Marcar como paga">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+
+                    @if($parcelasVencidas->count() >= 10)
+                        <div class="text-center mt-3">
+                            <a href="{{ route('parcelas.index', ['status' => 'vencidas']) }}" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-plus me-1"></i>
+                                Ver mais parcelas vencidas
+                            </a>
+                        </div>
+                    @endif
+                @else
+                    <div class="text-center py-3">
+                        <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                        <p class="text-muted mb-0">Nenhuma parcela vencida</p>
+                        <small class="text-muted">Parabéns! Todas as parcelas estão em dia!</small>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="row">
@@ -274,4 +340,79 @@
         </div>
     </div>
 </div>
+
+<!-- Modal para Marcar como Pago no Dashboard -->
+<div class="modal fade" id="modalPagamentoDashboard" tabindex="-1" aria-labelledby="modalPagamentoDashboardLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalPagamentoDashboardLabel">
+                    <i class="fas fa-check me-2"></i>
+                    Marcar Parcela como Paga
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formPagamentoDashboard" method="POST">
+                @csrf
+                @method('PATCH')
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <p class="mb-3">
+                            <strong>Venda:</strong> #<span id="modalVendaIdDashboard"></span><br>
+                            <strong>Parcela:</strong> <span id="modalParcelaNumeroDashboard"></span>ª<br>
+                            <strong>Valor:</strong> R$ <span id="modalValorDashboard"></span>
+                        </p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="dataPagamentoDashboard" class="form-label">Data do Pagamento <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="dataPagamentoDashboard" name="data_pagamento" required>
+                        <div class="form-text">Por padrão, será utilizada a data atual.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check me-1"></i>
+                        Marcar como Paga
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modalPagamentoDashboard = document.getElementById('modalPagamentoDashboard');
+    const formPagamentoDashboard = document.getElementById('formPagamentoDashboard');
+    const dataPagamentoDashboardInput = document.getElementById('dataPagamentoDashboard');
+
+    modalPagamentoDashboard.addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+        const parcelaId = button.getAttribute('data-parcela-id');
+        const parcelaNumero = button.getAttribute('data-parcela-numero');
+        const vendaId = button.getAttribute('data-venda-id');
+        const valor = button.getAttribute('data-valor');
+
+        // Atualizar informações no modal
+        document.getElementById('modalVendaIdDashboard').textContent = vendaId;
+        document.getElementById('modalParcelaNumeroDashboard').textContent = parcelaNumero;
+        document.getElementById('modalValorDashboard').textContent = valor;
+
+        // Configurar action do formulário
+        formPagamentoDashboard.action = `/parcelas/${parcelaId}/marcar-paga`;
+
+        // Definir data atual como padrão
+        const hoje = new Date().toISOString().split('T')[0];
+        dataPagamentoDashboardInput.value = hoje;
+    });
+});
+</script>
+@endpush
+
 @endsection

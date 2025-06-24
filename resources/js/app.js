@@ -106,7 +106,11 @@ window.VendasApp = {
             totalInput.value = total.toFixed(2);
         }
 
-        this.atualizarParcelas(total);
+        // Regenerar parcelas automaticamente quando o total mudar
+        const parcelasExistentes = document.querySelectorAll('input[name*="[valor]"]');
+        if (parcelasExistentes.length > 0 && total > 0) {
+            this.atualizarParcelas(total);
+        }
     },
 
     // Reindexar itens após remoção
@@ -208,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
         VendasApp.configurarEventosItem(item);
     });
 
-    // Evento para gerar parcelas
+    // Evento para gerar parcelas automaticamente
     const numeroParcelasInput = document.getElementById('numero_parcelas');
     if (numeroParcelasInput) {
         numeroParcelasInput.addEventListener('change', function() {
@@ -218,4 +222,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Calcular total inicial
     VendasApp.calcularTotal();
+
+    // Gerar parcelas iniciais se não existirem
+    const parcelasExistentes = document.querySelectorAll('input[name*="[valor]"]');
+    if (parcelasExistentes.length === 0) {
+        VendasApp.gerarParcelas();
+    }
 });

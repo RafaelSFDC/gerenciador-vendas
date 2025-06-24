@@ -46,23 +46,24 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        // Parcelas vencendo (próximos 7 dias) e vencidas
+        // Parcelas vencendo (próximos 7 dias)
         $proximosSete = Carbon::now()->addDays(7);
         $parcelasVencendo = Parcela::with(['venda'])
             ->whereHas('venda', function($query) use ($userId) {
                 $query->where('user_id', $userId);
             })
-            ->where(function($query) use ($hoje, $proximosSete) {
-                $query->where(function($q) use ($hoje, $proximosSete) {
-                    // Parcelas pendentes vencendo nos próximos 7 dias (incluindo hoje)
-                    $q->where('status', 'pendente')
-                      ->whereBetween('data_vencimento', [$hoje, $proximosSete]);
-                })
-                ->orWhere(function($q) {
-                    // Parcelas vencidas
-                    $q->where('status', 'vencida');
-                });
+            ->where('status', 'pendente')
+            ->whereBetween('data_vencimento', [$hoje, $proximosSete])
+            ->orderBy('data_vencimento')
+            ->limit(10)
+            ->get();
+
+        // Parcelas vencidas não pagas
+        $parcelasVencidas = Parcela::with(['venda'])
+            ->whereHas('venda', function($query) use ($userId) {
+                $query->where('user_id', $userId);
             })
+            ->where('status', 'vencida')
             ->orderBy('data_vencimento')
             ->limit(10)
             ->get();
@@ -73,7 +74,8 @@ class DashboardController extends Controller
             'vendasMes',
             'faturamentoMes',
             'vendasRecentes',
-            'parcelasVencendo'
+            'parcelasVencendo',
+            'parcelasVencidas'
         ));
     }
 }

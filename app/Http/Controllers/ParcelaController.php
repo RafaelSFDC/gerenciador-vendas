@@ -21,7 +21,7 @@ class ParcelaController extends Controller
     {
         $userId = Auth::id();
         $status = $request->get('status', 'todas');
-        
+
         $query = Parcela::with(['venda.cliente', 'venda.formaPagamento'])
             ->whereHas('venda', function($q) use ($userId) {
                 $q->where('user_id', $userId);
@@ -49,15 +49,15 @@ class ParcelaController extends Controller
             'total_pendentes' => Parcela::whereHas('venda', function($q) use ($userId) {
                 $q->where('user_id', $userId);
             })->where('status', 'pendente')->count(),
-            
+
             'total_vencidas' => Parcela::whereHas('venda', function($q) use ($userId) {
                 $q->where('user_id', $userId);
             })->where('status', 'vencida')->count(),
-            
+
             'vencendo_hoje' => Parcela::whereHas('venda', function($q) use ($userId) {
                 $q->where('user_id', $userId);
             })->where('status', 'pendente')->whereDate('data_vencimento', $hoje)->count(),
-            
+
             'vencendo_7_dias' => Parcela::whereHas('venda', function($q) use ($userId) {
                 $q->where('user_id', $userId);
             })->where('status', 'pendente')->whereBetween('data_vencimento', [$hoje, $hoje->copy()->addDays(7)])->count(),
@@ -69,7 +69,7 @@ class ParcelaController extends Controller
     /**
      * Marcar parcela como paga
      */
-    public function marcarComoPaga(Parcela $parcela)
+    public function marcarComoPaga(Request $request, Parcela $parcela)
     {
         // Verificar se a parcela pertence ao usuário
         if ($parcela->venda->user_id !== Auth::id()) {
@@ -81,10 +81,13 @@ class ParcelaController extends Controller
             return back()->with('warning', 'Esta parcela já está marcada como paga.');
         }
 
+        // Validar a data de pagamento se fornecida
+        $dataPagamento = $request->data_pagamento ? Carbon::parse($request->data_pagamento) : Carbon::today();
+
         // Marcar como paga
         $parcela->update([
             'status' => 'paga',
-            'data_pagamento' => Carbon::today()
+            'data_pagamento' => $dataPagamento
         ]);
 
         return back()->with('success', 'Parcela marcada como paga com sucesso!');
