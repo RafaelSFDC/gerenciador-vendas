@@ -12,12 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('parcelas', function (Blueprint $table) {
-            // Verificar se a coluna valor_original já existe antes de tentar adicioná-la
+            // Remover coluna is_customizada se existir (pode ter sido criada por engano)
+            if (Schema::hasColumn('parcelas', 'is_customizada')) {
+                $table->dropColumn('is_customizada');
+            }
+
+            // Garantir que temos as colunas corretas
             if (!Schema::hasColumn('parcelas', 'valor_original')) {
                 $table->decimal('valor_original', 10, 2)->nullable()->after('valor');
             }
 
-            // Verificar se a coluna customizada já existe antes de tentar adicioná-la
             if (!Schema::hasColumn('parcelas', 'customizada')) {
                 $table->boolean('customizada')->default(false)->after('valor_original');
             }
@@ -30,11 +34,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('parcelas', function (Blueprint $table) {
-            // Só remover as colunas se elas existirem e foram adicionadas por esta migration
-            // Como valor_original já existia na migration original, não devemos removê-la
-            if (Schema::hasColumn('parcelas', 'customizada')) {
-                $table->dropColumn('customizada');
-            }
+            // Recriar is_customizada se necessário (não recomendado)
+            // Esta migration é principalmente para limpeza, rollback manual se necessário
         });
     }
 };
