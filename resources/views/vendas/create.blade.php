@@ -72,7 +72,7 @@
                     <div class="mb-3">
                         <label for="numero_parcelas" class="form-label">Número de Parcelas <span class="text-danger">*</span></label>
                         <input type="number" name="numero_parcelas" id="numero_parcelas" class="form-control"
-                               value="{{ old('numero_parcelas', 1) }}" min="1" max="12" required>
+                               value="{{ old('numero_parcelas', 1) }}" min="1" max="120" required>
                     </div>
 
                     <div class="mb-3">

@@ -23,7 +23,7 @@
 <form action="{{ route('vendas.update', $venda) }}" method="POST" id="form-venda">
     @csrf
     @method('PUT')
-    
+
     <div class="row">
         <!-- Informações da Venda -->
         <div class="col-md-6 mb-4">
@@ -40,7 +40,7 @@
                         <select name="cliente_id" id="cliente_id" class="form-select">
                             <option value="">Selecione um cliente (opcional)</option>
                             @foreach($clientes as $cliente)
-                                <option value="{{ $cliente->id }}" 
+                                <option value="{{ $cliente->id }}"
                                     {{ (old('cliente_id', $venda->cliente_id) == $cliente->id) ? 'selected' : '' }}>
                                     {{ $cliente->nome }} - {{ $cliente->email }}
                                 </option>
@@ -50,7 +50,7 @@
 
                     <div class="mb-3">
                         <label for="data_venda" class="form-label">Data da Venda <span class="text-danger">*</span></label>
-                        <input type="date" name="data_venda" id="data_venda" class="form-control" 
+                        <input type="date" name="data_venda" id="data_venda" class="form-control"
                                value="{{ old('data_venda', $venda->data_venda->format('Y-m-d')) }}" required>
                     </div>
 
@@ -59,7 +59,7 @@
                         <select name="forma_pagamento_id" id="forma_pagamento_id" class="form-select" required>
                             <option value="">Selecione uma forma de pagamento</option>
                             @foreach($formasPagamento as $forma)
-                                <option value="{{ $forma->id }}" 
+                                <option value="{{ $forma->id }}"
                                     {{ (old('forma_pagamento_id', $venda->forma_pagamento_id) == $forma->id) ? 'selected' : '' }}>
                                     {{ $forma->nome }}
                                 </option>
@@ -69,13 +69,13 @@
 
                     <div class="mb-3">
                         <label for="numero_parcelas" class="form-label">Número de Parcelas <span class="text-danger">*</span></label>
-                        <input type="number" name="numero_parcelas" id="numero_parcelas" class="form-control" 
-                               value="{{ old('numero_parcelas', $venda->numero_parcelas) }}" min="1" max="12" required>
+                        <input type="number" name="numero_parcelas" id="numero_parcelas" class="form-control"
+                               value="{{ old('numero_parcelas', $venda->numero_parcelas) }}" min="1" max="120" required>
                     </div>
 
                     <div class="mb-3">
                         <label for="observacoes" class="form-label">Observações</label>
-                        <textarea name="observacoes" id="observacoes" class="form-control" rows="3" 
+                        <textarea name="observacoes" id="observacoes" class="form-control" rows="3"
                                   placeholder="Observações sobre a venda...">{{ old('observacoes', $venda->observacoes) }}</textarea>
                     </div>
                 </div>
@@ -142,15 +142,15 @@
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <input type="number" name="itens[{{ $index }}][quantidade]" class="form-control quantidade-input" 
+                            <input type="number" name="itens[{{ $index }}][quantidade]" class="form-control quantidade-input"
                                    placeholder="Qtd" min="1" step="1" value="{{ $item->quantidade }}" required>
                         </div>
                         <div class="col-md-2">
-                            <input type="number" name="itens[{{ $index }}][preco_unitario]" class="form-control preco-input" 
+                            <input type="number" name="itens[{{ $index }}][preco_unitario]" class="form-control preco-input"
                                    placeholder="Preço" min="0" step="0.01" value="{{ $item->preco_unitario }}" required>
                         </div>
                         <div class="col-md-2">
-                            <input type="number" name="itens[{{ $index }}][subtotal]" class="form-control subtotal-input" 
+                            <input type="number" name="itens[{{ $index }}][subtotal]" class="form-control subtotal-input"
                                    placeholder="Subtotal" value="{{ $item->subtotal }}" readonly>
                         </div>
                         <div class="col-md-2">
@@ -186,12 +186,12 @@
                             <label class="form-label">Parcela {{ $index + 1 }}</label>
                         </div>
                         <div class="col-md-4">
-                            <input type="date" name="parcelas[{{ $index }}][data_vencimento]" 
+                            <input type="date" name="parcelas[{{ $index }}][data_vencimento]"
                                    class="form-control" value="{{ $parcela->data_vencimento->format('Y-m-d') }}" required>
                         </div>
                         <div class="col-md-4">
-                            <input type="number" name="parcelas[{{ $index }}][valor]" 
-                                   class="form-control" value="{{ $parcela->valor }}" 
+                            <input type="number" name="parcelas[{{ $index }}][valor]"
+                                   class="form-control" value="{{ $parcela->valor }}"
                                    min="0" step="0.01" required>
                         </div>
                     </div>
@@ -208,7 +208,7 @@
                     <i class="fas fa-times me-1"></i>
                     Cancelar
                 </a>
-                
+
                 <div>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save me-1"></i>
@@ -254,7 +254,7 @@ document.getElementById('form-venda').addEventListener('submit', function(e) {
         alert('Adicione pelo menos um item à venda.');
         return false;
     }
-    
+
     const parcelas = document.querySelectorAll('input[name*="[valor]"]');
     if (parcelas.length === 0) {
         e.preventDefault();
